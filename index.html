@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>myMemoPad</title>
+<script src="js/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+</head>
+<body>
+<header>
+<h1>MemoPad</h1>
+</header>
+<main>
+    <select id="list"><option value="">新しい記事を書く</option></select>
+    <input type="text" id="key" value="タイトル">
+    <textarea id="memo"></textarea>
+    <ul>
+        <li id="save">Save</li>
+        <li id="clear">削除</li>
+    </ul>
+    <div class="btn" id="clear_all">全削除</div>
+</main>
+<!-- <table id="list">
+
+</table> -->
+
+
+<script>
+
+let selectVal = 0;
+let selectKey = 0;
+
+
+
+//曜日配列
+let eMonth = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+let week   = ["日", "月", "火", "水", "木", "金", "土"];
+
+//日時取得
+let now = new Date();            //日付取得準備（必須）！！
+let year = now.getFullYear();    //年
+let month = now.getMonth() + 1;  //月+１を足す
+let date = now.getDate();        //日
+let day = now.getDay();          //曜日（数値）
+let h = now.getHours();          //時
+let m = now.getMinutes();        //分
+let s = now.getSeconds();        //秒
+
+//日時表示文字列の作成
+let str = year + "-" + month + "-" + date + "(" + week[day] + ") " + h + ":" + m + ":" + s;
+
+//div要素id属性mainを指定
+$('#date').html(str);
+
+//1.Save クリックイベント
+$("#save").on("click",function(){
+    // 入力内容を変数に入れる
+    const key = $("#key").val();
+    let doc = ["保存日時"+str,$("#memo").val()];
+
+
+    // ローカルストレージに保存
+    localStorage.setItem(key,doc);
+    location.reload();
+
+     
+
+});
+
+//2.clear_all クリックイベント
+$("#clear_all").on("click",function(){
+    // ローカルストレージの削除
+    localStorage.clear();
+    $("#list").empty();
+    location.reload();
+});
+
+// 一部削除
+$("#clear").on("click",function(){
+    // ローカルストレージの削除
+    localStorage.removeItem(selectKey);
+    $("#list").empty();
+    location.reload();
+});
+
+//3.ページ読み込み：保存データ取得表示
+for(let i=0; i<localStorage.length; i++){
+    const key = localStorage.key(i);
+    let memo = localStorage.getItem(key);
+
+    const html = '<option value="'+memo+'">'+key+'</option>'
+    $("#list").append(html);
+}
+
+// 保存した関数の呼び出し
+$("#list").change( function(){
+    selectKey = $("#list option:selected").val();
+
+    selectVal = $("#list option:selected").text();
+    $("#key").val(selectVal);
+    $("#memo").html(selectKey);
+});
+
+
+</script>
+</body>
+</html>
